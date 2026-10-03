@@ -176,7 +176,7 @@
   h3 { font-size:12.5px; font-weight:600; margin:16px 0 8px; color:var(--text-muted); }
   .row2 { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:8px; }
   label { display:block; font-size:13px; color:#3A4350; margin-bottom:2px; }
-  input[type=number], input[type=text], select {
+  input[type=number], input[type=text], input[type=email], select {
     width:100%; padding:11px 10px; border:1px solid #C9D0D8; border-radius:6px; font-size:16px;
     font-family:'IBM Plex Mono', monospace; background:#fff; min-height:44px;
   }
@@ -307,6 +307,8 @@
   .consent-row label { font-size:12.5px; font-weight:400; color:#6B7280; margin:0; line-height:1.5; }
   .consent-row a { color:var(--amber-dark); }
   .hp-field { position:absolute; left:-9999px; top:-9999px; }
+  .contact-form-wrap { margin-top:14px; padding-top:14px; border-top:1px dashed var(--border); }
+  .contact-form-wrap.hidden { display:none; }
   .shop-note { font-size:11.5px; color:#9AA2AD; line-height:1.5; margin-top:10px; }
 
   /* Informačné sekcie: metodika, glosár, FAQ */
@@ -498,30 +500,33 @@
 
   <div class="panel info-panel" id="kontakt">
     <h2>Kontakt</h2>
-    <p class="sub" style="margin:0 0 16px;">Máš otázku, pripomienku alebo si našiel chybu v kalkulačke? Napíš mi — odpoviem čo najskôr.</p>
-    <form class="contact-form" action="https://formsubmit.co/chobot.lukas913@gmail.com" method="POST">
-      <input type="hidden" name="_subject" value="Nová správa z navrhrozvadzaca.sk">
-      <input type="hidden" name="_template" value="table">
-      <input type="hidden" name="_captcha" value="true">
-      <input type="hidden" name="_next" value="https://navrhrozvadzaca.sk/dakujeme.html">
-      <input type="text" name="_honey" class="hp-field" tabindex="-1" autocomplete="off">
+    <div class="shop-toggle-row" style="justify-content:flex-start; margin-top:0;">
+      <button class="shop-toggle-btn" id="contactToggleBtn" onclick="toggleContactForm()">+ Máš otázku alebo pripomienku? Napíš nám</button>
+    </div>
+    <div class="contact-form-wrap hidden" id="contactFormWrap">
+      <form class="contact-form" action="https://formsubmit.co/chobot.lukas913@gmail.com" method="POST">
+        <input type="hidden" name="_subject" value="Nová správa z navrhrozvadzaca.sk">
+        <input type="hidden" name="_template" value="table">
+        <input type="hidden" name="_captcha" value="true">
+        <input type="hidden" name="_next" value="https://navrhrozvadzaca.sk/dakujeme.html">
+        <input type="text" name="_honey" class="hp-field" tabindex="-1" autocomplete="off">
 
-      <div class="row2">
-        <div><label for="kMeno">Meno</label><input type="text" id="kMeno" name="Meno" required maxlength="100"></div>
-        <div><label for="kEmail">E-mail</label><input type="email" id="kEmail" name="Email" required maxlength="150"></div>
-      </div>
+        <div class="row2">
+          <div><label for="kMeno">Meno</label><input type="text" id="kMeno" name="Meno" required maxlength="100"></div>
+          <div><label for="kEmail">E-mail</label><input type="email" id="kEmail" name="Email" required maxlength="150"></div>
+        </div>
 
-      <label for="kSprava" style="margin-top:4px;">Správa / otázka</label>
-      <textarea id="kSprava" name="Správa" required maxlength="3000"></textarea>
+        <label for="kSprava" style="margin-top:4px;">Správa / otázka</label>
+        <textarea id="kSprava" name="Správa" required maxlength="3000"></textarea>
 
-      <div class="consent-row">
-        <input type="checkbox" id="kConsent" required>
-        <label for="kConsent">Súhlasím so spracovaním zadaných osobných údajov za účelom vybavenia mojej správy, v súlade so <a href="privacy.html">zásadami ochrany osobných údajov</a>.</label>
-      </div>
+        <div class="consent-row">
+          <input type="checkbox" id="kConsent" required>
+          <label for="kConsent">Súhlasím so spracovaním zadaných osobných údajov za účelom vybavenia mojej správy, v súlade so <a href="privacy.html">zásadami ochrany osobných údajov</a>.</label>
+        </div>
 
-      <button type="submit" class="btn">Odoslať správu</button>
-    </form>
-    <p class="note" style="margin-top:14px;">Prípadne môžeš napísať priamo na <a href="mailto:chobot.lukas913@gmail.com">chobot.lukas913@gmail.com</a>.</p>
+        <button type="submit" class="btn">Odoslať správu</button>
+      </form>
+    </div>
   </div>
 
   <div class="panel info-panel">
@@ -1224,6 +1229,19 @@ function getShopLocale(){
 function setShopLocale(loc){
   try { localStorage.setItem(SHOP_LS_KEY, loc); } catch(e){}
   renderShoppingList();
+}
+
+function toggleContactForm(){
+  const wrap = document.getElementById('contactFormWrap');
+  const btn = document.getElementById('contactToggleBtn');
+  const isHidden = wrap.classList.contains('hidden');
+  if (isHidden){
+    wrap.classList.remove('hidden');
+    btn.textContent = '− Skryť formulár';
+  } else {
+    wrap.classList.add('hidden');
+    btn.textContent = '+ Máš otázku alebo pripomienku? Napíš nám';
+  }
 }
 
 function toggleShoppingList(){
