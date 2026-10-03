@@ -238,6 +238,34 @@
     .brand { font-size:16px; }
   }
 
+  /* Nákupný zoznam (Heureka) */
+  .shop-toggle-row { display:flex; justify-content:center; margin-top:10px; }
+  .shop-toggle-btn {
+    background:none; border:1px dashed #C9D0D8; color:#5A6472; border-radius:8px;
+    padding:9px 16px; font-size:13px; cursor:pointer; min-height:40px;
+  }
+  .shop-toggle-btn:hover { border-color:var(--amber-dark); color:var(--amber-dark); }
+  .shop-panel { margin-top:14px; padding-top:14px; border-top:1px dashed var(--border); }
+  .shop-panel.hidden { display:none; }
+  .shop-head { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px; margin-bottom:10px; }
+  .shop-head h3 { margin:0; }
+  .locale-switch { display:inline-flex; border:1px solid #C9D0D8; border-radius:8px; overflow:hidden; }
+  .locale-switch button {
+    background:#fff; border:none; padding:7px 14px; font-size:12.5px; font-weight:600; color:#5A6472; cursor:pointer; min-height:36px;
+  }
+  .locale-switch button.active { background:var(--navy); color:var(--amber); }
+  .shop-item { display:flex; align-items:center; justify-content:space-between; gap:10px; padding:8px 0; border-bottom:1px solid #EDEFF2; flex-wrap:wrap; }
+  .shop-item:last-child { border-bottom:none; }
+  .shop-item-label { font-size:13px; color:#333B47; flex:1 1 220px; }
+  .shop-item-label .qty { color:#9AA2AD; font-weight:600; }
+  .shop-link {
+    display:inline-flex; align-items:center; gap:5px; background:var(--amber-tint); color:var(--amber-dark);
+    border:1px solid #F0D48A; border-radius:7px; padding:6px 12px; font-size:12.5px; font-weight:600;
+    text-decoration:none; min-height:34px; white-space:nowrap;
+  }
+  .shop-link:hover { background:var(--amber); color:var(--navy); }
+  .shop-note { font-size:11.5px; color:#9AA2AD; line-height:1.5; margin-top:10px; }
+
   /* Informačné sekcie: metodika, glosár, FAQ */
   .info-panel h2 { font-size:17px; margin:0 0 12px; color:var(--navy); }
   .info-panel p { font-size:13.5px; line-height:1.65; color:#333B47; margin:0 0 10px; }
@@ -375,6 +403,22 @@
     <div class="btnrow" style="margin-top:16px;">
       <button class="btn" onclick="exportExcel()">⬇ Export do Excelu (.xlsx)</button>
       <button class="btn secondary" onclick="exportPDF()">⬇ Export do PDF (.pdf)</button>
+    </div>
+
+    <div class="shop-toggle-row">
+      <button class="shop-toggle-btn" id="shopToggleBtn" onclick="toggleShoppingList()">🛒 Zobraziť nákupný zoznam (porovnanie cien)</button>
+    </div>
+
+    <div class="shop-panel hidden" id="shopPanel">
+      <div class="shop-head">
+        <h3 style="margin:0;">Nákupný zoznam</h3>
+        <div class="locale-switch" id="localeSwitch">
+          <button id="localeSk" onclick="setShopLocale('sk')">Slovensko</button>
+          <button id="localeCz" onclick="setShopLocale('cz')">Česko</button>
+        </div>
+      </div>
+      <div id="shopItems"></div>
+      <p class="shop-note">Odkazy vedú na vyhľadávanie na Heureke podľa parametrov položky — nejde o konkrétne odporúčanie produktu ani o platenú reklamu. Pred nákupom si vždy over technické parametre s elektrikárom.</p>
     </div>
 
     <p class="note">Reálne dimenzovanie, menovité prúdy, selektivitu istenia a rozmiestnenie v rozvádzači musí posúdiť kvalifikovaný elektrikár alebo projektant elektro podľa STN 33 2000 a STN 33 2130 (prípadne ČSN 33 2130 v ČR). Zoznam je editovateľný — riadky pridávaj/mazaj podľa reálnej situácie a pred exportom stlač „Prepočítať súhrn“.</p>
@@ -842,6 +886,83 @@ function prepocitaj(){
   } else {
     warnBox.style.display = 'none';
   }
+
+  // Nákupný zoznam (Heureka) — zoskupené položky
+  const shoppingItems = buildShoppingItems({
+    circuits, mainSwitchPoles, mainSwitchAmps, spdPoles, rcd2p, rcd4p, enclosureSize
+  });
+  window._shoppingItems = shoppingItems;
+  renderShoppingList();
+}
+
+// ===== Nákupný zoznam (Heureka) =====
+const SHOP_LS_KEY = 'shopLocale';
+
+function buildShoppingItems({ circuits, mainSwitchPoles, mainSwitchAmps, spdPoles, rcd2p, rcd4p, enclosureSize }){
+  const cableCounts = {};
+  const breakerCounts = {};
+  circuits.forEach(c => {
+    if (c.cable) cableCounts[c.cable] = (cableCounts[c.cable]||0) + 1;
+    if (c.breaker) breakerCounts[c.breaker] = (breakerCounts[c.breaker]||0) + 1;
+  });
+
+  const items = [];
+  Object.entries(cableCounts).forEach(([cable, n]) => {
+    items.push({ label: `Kábel ${cable}`, qty: n, query: `kábel ${cable}` });
+  });
+  Object.entries(breakerCounts).forEach(([breaker, n]) => {
+    const clean = is3f(breaker) ? breaker.replace(/\s*\(3f\)/i,'') + ' 3P' : breaker;
+    items.push({ label: `Istič ${clean}`, qty: n, query: `istič ${clean}` });
+  });
+  if (rcd2p > 0) items.push({ label: `Prúdový chránič 40A/30mA, 2P`, qty: rcd2p, query: `prúdový chránič 40A 30mA 2P` });
+  if (rcd4p > 0) items.push({ label: `Prúdový chránič 40A/30mA, 4P`, qty: rcd4p, query: `prúdový chránič 40A 30mA 4P` });
+  items.push({ label: `Hlavný vypínač (odpájač), ${mainSwitchPoles}-pól, ${mainSwitchAmps}A`, qty: 1, query: `hlavný vypínač odpájač ${mainSwitchPoles}P ${mainSwitchAmps}A` });
+  items.push({ label: `Zvodič prepätia SPD typ 1+2, ${spdPoles}-pól`, qty: 1, query: `zvodič prepätia SPD ${spdPoles}P typ 1+2` });
+  items.push({ label: `Rozvádzačová skriňa, ${enclosureSize} modulov`, qty: 1, query: `rozvádzačová skriňa ${enclosureSize} modulov` });
+
+  return items;
+}
+
+function heurekaUrl(query, locale){
+  const domain = locale === 'cz' ? 'heureka.cz' : 'heureka.sk';
+  return `https://www.${domain}/?h%5Bfraze%5D=${encodeURIComponent(query)}`;
+}
+
+function getShopLocale(){
+  try { return localStorage.getItem(SHOP_LS_KEY) || 'sk'; } catch(e){ return 'sk'; }
+}
+
+function setShopLocale(loc){
+  try { localStorage.setItem(SHOP_LS_KEY, loc); } catch(e){}
+  renderShoppingList();
+}
+
+function toggleShoppingList(){
+  const panel = document.getElementById('shopPanel');
+  const isHidden = panel.classList.contains('hidden');
+  if (isHidden){
+    panel.classList.remove('hidden');
+    renderShoppingList();
+  } else {
+    panel.classList.add('hidden');
+  }
+}
+
+function renderShoppingList(){
+  const items = window._shoppingItems || [];
+  const locale = getShopLocale();
+
+  document.getElementById('localeSk').classList.toggle('active', locale !== 'cz');
+  document.getElementById('localeCz').classList.toggle('active', locale === 'cz');
+
+  const container = document.getElementById('shopItems');
+  if (!container) return;
+  container.innerHTML = items.map(item => `
+    <div class="shop-item">
+      <div class="shop-item-label">${item.label}${item.qty > 1 ? ` <span class="qty">×${item.qty}</span>` : ''}</div>
+      <a class="shop-link" href="${heurekaUrl(item.query, locale)}" target="_blank" rel="noopener nofollow sponsored">Porovnať ceny ↗</a>
+    </div>
+  `).join('');
 }
 
 const SITE_URL = "https://navrhrozvadzaca.sk";
