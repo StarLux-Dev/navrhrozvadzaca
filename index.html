@@ -4,13 +4,34 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-<!-- Google Analytics (GA4) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-LRXWBE810H"></script>
+<!-- Google Analytics (GA4) — načíta sa až po súhlase s cookies, viď cookie lišta nižšie -->
 <script>
+  const GA_ID = 'G-LRXWBE810H';
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-LRXWBE810H');
+  // Google Consent Mode v2 — predvolene zamietnuté, kým používateľ nerozhodne
+  gtag('consent', 'default', {
+    'analytics_storage': 'denied',
+    'ad_storage': 'denied',
+    'ad_user_data': 'denied',
+    'ad_personalization': 'denied'
+  });
+
+  function loadGA(){
+    if (window.__gaLoaded) return;
+    window.__gaLoaded = true;
+    const s = document.createElement('script');
+    s.async = true;
+    s.src = 'https://www.googletagmanager.com/gtag/js?id=' + GA_ID;
+    document.head.appendChild(s);
+    gtag('js', new Date());
+    gtag('config', GA_ID, { anonymize_ip: true });
+  }
+
+  function grantConsent(){
+    gtag('consent', 'update', { 'analytics_storage': 'granted' });
+    loadGA();
+  }
 </script>
 
 <!-- ===== SEO — doména navrhrozvadzaca.sk ===== -->
@@ -177,6 +198,34 @@
     .btnrow .btn { flex:1 1 100%; }
     .brand { font-size:16px; }
   }
+
+  /* Pätička */
+  .site-footer { max-width:760px; margin:8px auto 28px; padding:0 14px; text-align:center; }
+  .site-footer p { font-size:11.5px; color:#9AA2AD; line-height:1.6; }
+  .site-footer a { color:#6B7280; text-decoration:underline; }
+  .site-footer a:hover { color:var(--amber-dark); }
+
+  /* Cookie lišta */
+  #cookieBar {
+    position:fixed; left:0; right:0; bottom:0; z-index:999;
+    background:var(--navy); border-top:3px solid var(--amber);
+    padding:16px 18px; display:flex; flex-wrap:wrap; gap:14px; align-items:center; justify-content:center;
+    box-shadow:0 -4px 18px rgba(0,0,0,.25);
+  }
+  #cookieBar.hidden { display:none; }
+  #cookieBar p { color:#D8DCE3; font-size:13px; line-height:1.5; margin:0; max-width:560px; flex:1 1 320px; }
+  #cookieBar a { color:var(--amber); text-decoration:underline; }
+  .cookie-actions { display:flex; gap:10px; flex-wrap:wrap; }
+  .cookie-btn { min-height:44px; padding:0 18px; border-radius:8px; font-size:13.5px; font-weight:600; cursor:pointer; border:1px solid transparent; }
+  .cookie-btn.accept { background:var(--amber); color:var(--navy); }
+  .cookie-btn.accept:hover { background:var(--amber-dark); }
+  .cookie-btn.reject { background:transparent; color:#D8DCE3; border-color:#3A4452; }
+  .cookie-btn.reject:hover { border-color:#5A6472; }
+  @media (max-width:560px){
+    #cookieBar { justify-content:flex-start; padding:14px; }
+    .cookie-actions { width:100%; }
+    .cookie-btn { flex:1 1 auto; }
+  }
 </style>
 </head>
 <body>
@@ -273,6 +322,19 @@
 <datalist id="zoneList"></datalist>
 <datalist id="cableList"></datalist>
 <datalist id="breakerList"></datalist>
+
+<footer class="site-footer">
+  <p>© 2026 Návrh elektrického rozvádzača · Orientačný nástroj, nenahrádza projekt elektroinštalácie ani revíznu správu.<br>
+  <a href="privacy.html">Zásady ochrany osobných údajov a cookies</a> · <a href="#" onclick="openCookieSettings(); return false;">Nastavenia cookies</a></p>
+</footer>
+
+<div id="cookieBar" class="hidden" role="dialog" aria-label="Súhlas s cookies">
+  <p>Táto stránka používa cookies len na základnú anonymnú analytiku návštevnosti (Google Analytics), aby sme vedeli appku zlepšovať. Žiadne osobné údaje sa nepredávajú tretím stranám. Viac v <a href="privacy.html">zásadách ochrany osobných údajov</a>.</p>
+  <div class="cookie-actions">
+    <button class="cookie-btn reject" onclick="cookieChoice(false)">Odmietnuť</button>
+    <button class="cookie-btn accept" onclick="cookieChoice(true)">Súhlasím</button>
+  </div>
+</div>
 
 <script>
 const MODULES_PER_ROW = 12;
@@ -848,6 +910,29 @@ function exportPDF(){
   doc.save('rozvadzac-zoznam.pdf');
 }
 
+// ===== Cookie súhlas (GDPR) =====
+const COOKIE_LS_KEY = 'cookieConsent'; // 'accepted' | 'rejected'
+
+function cookieChoice(accepted){
+  try { localStorage.setItem(COOKIE_LS_KEY, accepted ? 'accepted' : 'rejected'); } catch(e){}
+  document.getElementById('cookieBar').classList.add('hidden');
+  if (accepted) grantConsent();
+}
+
+function openCookieSettings(){
+  document.getElementById('cookieBar').classList.remove('hidden');
+}
+
+(function initCookieBar(){
+  let choice = null;
+  try { choice = localStorage.getItem(COOKIE_LS_KEY); } catch(e){}
+  if (choice === 'accepted') {
+    grantConsent();
+  } else if (choice === null) {
+    document.getElementById('cookieBar').classList.remove('hidden');
+  }
+  // ak 'rejected', lišta ostáva skrytá a GA sa nenačíta
+})();
 </script>
 </body>
 </html>
