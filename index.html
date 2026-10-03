@@ -159,11 +159,15 @@
   /* ---- Top brand bar ---- */
   .topbar { background:var(--navy); border-bottom:4px solid var(--amber); }
   .topbar-inner {
-    max-width:720px; margin:0 auto; padding:16px 14px; display:flex; align-items:center;
-    justify-content:center; gap:9px;
+    max-width:760px; margin:0 auto; padding:14px 14px; display:flex; align-items:center;
+    justify-content:space-between; gap:10px 16px; flex-wrap:wrap;
   }
-  .brand { display:flex; align-items:center; gap:9px; color:#fff; font-size:18px; font-weight:700; text-align:center; margin:0; }
+  .brand { display:flex; align-items:center; gap:9px; color:#fff; font-size:18px; font-weight:700; text-align:center; margin:0; text-decoration:none; }
   .brand-mark { color:var(--amber); font-size:20px; line-height:1; }
+  .topnav { display:flex; gap:2px; flex-wrap:wrap; }
+  .topnav-link { color:#C9D0D8; font-size:13px; font-weight:600; padding:7px 11px; border-radius:6px; text-decoration:none; }
+  .topnav-link:hover { background:rgba(255,255,255,.08); color:#fff; }
+  .topnav-link.active { color:var(--amber); background:rgba(245,166,35,.13); }
 
   .wrap { max-width: 720px; margin: 0 auto; padding: 20px 14px 0; }
   .sub { font-size: 14px; line-height:1.5; color:var(--text-muted); margin: 4px 0 20px; }
@@ -351,6 +355,11 @@
 <div class="topbar">
   <div class="topbar-inner">
     <h1 class="brand"><span class="brand-mark">⚡</span>Návrh elektrického rozvádzača</h1>
+    <nav class="topnav" aria-label="Hlavná navigácia">
+      <a href="index.html" class="topnav-link active">Kalkulačka</a>
+      <a href="index.html#faq" class="topnav-link">FAQ</a>
+      <a href="kontakt.html" class="topnav-link">Kontakt</a>
+    </nav>
   </div>
 </div>
 
@@ -518,7 +527,7 @@
     </dl>
   </div>
 
-  <div class="panel info-panel">
+  <div class="panel info-panel" id="faq">
     <h2>Časté otázky</h2>
     <div class="faq">
       <details>
@@ -576,7 +585,7 @@
 
 <footer class="site-footer">
   <p>© 2026 Návrh elektrického rozvádzača · Orientačný nástroj, nenahrádza projekt elektroinštalácie ani revíznu správu.<br>
-  <a href="privacy.html">Zásady ochrany osobných údajov a cookies</a> · <a href="#" onclick="openCookieSettings(); return false;">Nastavenia cookies</a></p>
+  <a href="kontakt.html">Kontakt</a> · <a href="privacy.html">Zásady ochrany osobných údajov a cookies</a> · <a href="#" onclick="openCookieSettings(); return false;">Nastavenia cookies</a></p>
 </footer>
 
 <div id="cookieBar" class="hidden" role="dialog" aria-label="Súhlas s cookies">

@@ -15,9 +15,13 @@
   * { box-sizing:border-box; }
   body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif; background:var(--bg); color:var(--text); }
   .topbar { background:var(--navy); border-bottom:4px solid var(--amber); }
-  .topbar-inner { max-width:760px; margin:0 auto; padding:16px 18px; }
+  .topbar-inner { max-width:760px; margin:0 auto; padding:14px 18px; display:flex; align-items:center; justify-content:space-between; gap:10px 16px; flex-wrap:wrap; }
   .brand { color:#fff; font-size:19px; font-weight:700; display:flex; align-items:center; gap:8px; text-decoration:none; }
   .brand-mark { color:var(--amber); }
+  .topnav { display:flex; gap:2px; flex-wrap:wrap; }
+  .topnav-link { color:#C9D0D8; font-size:13px; font-weight:600; padding:7px 11px; border-radius:6px; text-decoration:none; }
+  .topnav-link:hover { background:rgba(255,255,255,.08); color:#fff; }
+  .topnav-link.active { color:var(--amber); background:rgba(245,166,35,.13); }
   .wrap { max-width:760px; margin:0 auto; padding:28px 18px 60px; }
   .panel { background:var(--panel); border:1px solid var(--border); border-radius:12px; padding:24px 26px; }
   h1 { font-size:22px; margin:0 0 4px; }
@@ -35,6 +39,11 @@
 <div class="topbar">
   <div class="topbar-inner">
     <a href="index.html" class="brand"><span class="brand-mark">⚡</span>Návrh elektrického rozvádzača</a>
+    <nav class="topnav" aria-label="Hlavná navigácia">
+      <a href="index.html" class="topnav-link">Kalkulačka</a>
+      <a href="index.html#faq" class="topnav-link">FAQ</a>
+      <a href="kontakt.html" class="topnav-link">Kontakt</a>
+    </nav>
   </div>
 </div>
 
@@ -47,9 +56,17 @@
     <p>Prevádzkovateľom webovej stránky navrhrozvadzaca.sk je Lukáš Chobot, kontakt: <a href="mailto:chobot.lukas913@gmail.com">chobot.lukas913@gmail.com</a>. Stránka je bezplatný orientačný nástroj pre elektrikárov a stavebníkov na Slovensku a v Česku.</p>
 
     <h2>2. Aké údaje spracúvame</h2>
-    <p>Táto stránka nemá registráciu, prihlasovanie ani kontaktný formulár — nezbierame mená, e-maily ani iné identifikačné údaje priamo od vás. Parametre domu a zoznam okruhov, ktoré zadáte do kalkulačky, sa spracúvajú <strong>len vo vašom prehliadači</strong> a nikdy sa neodosielajú na žiadny server.</p>
+    <p>Samotná kalkulačka nemá registráciu ani prihlasovanie. Parametre domu a zoznam okruhov, ktoré zadáte do kalkulačky, sa spracúvajú <strong>len vo vašom prehliadači</strong> a nikdy sa neodosielajú na žiadny server. Osobné údaje od vás získavame jedine vtedy, ak nám ich sami dobrovoľne poskytnete cez kontaktný formulár (bod 3).</p>
 
-    <h2>3. Cookies a analytika (Google Analytics)</h2>
+    <h2>3. Kontaktný formulár</h2>
+    <p>Na stránke <a href="kontakt.html">Kontakt</a> môžete odoslať správu. Pri jej odoslaní spracúvame údaje, ktoré sami vyplníte — meno, e-mailovú adresu a text správy — a to výlučne za účelom vybavenia vašej otázky či požiadavky.</p>
+    <ul>
+      <li>Formulár po odoslaní spracuje tretia strana — služba <strong>FormSubmit</strong> (formsubmit.co) — ktorá správu doručí priamo na e-mail prevádzkovateľa; údaje sa u nej trvalo neukladajú.</li>
+      <li>Formulár odošlete až po zaškrtnutí súhlasu so spracovaním údajov na účely vybavenia správy.</li>
+      <li>Správu si môžete kedykoľvek rozmyslieť a požiadať o jej vymazanie z e-mailovej schránky prevádzkovateľa — stačí napísať na kontaktný e-mail (bod 7).</li>
+    </ul>
+
+    <h2>4. Cookies a analytika (Google Analytics)</h2>
     <p>So súhlasom používame Google Analytics 4 na anonymnú štatistiku návštevnosti (napr. počet návštev, krajina, typ zariadenia). Slúži nám to len na zlepšovanie stránky.</p>
     <ul>
       <li>Google Analytics sa spustí až po vašom súhlase v cookie lište.</li>
@@ -58,16 +75,16 @@
       <li>Údaje spracúva spoločnosť Google Ireland Limited / Google LLC, v súlade s vlastnými zásadami ochrany súkromia: <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">policies.google.com/privacy</a>. Dáta môžu byť prenesené aj mimo EÚ (najmä do USA), na základe štandardných zmluvných doložiek Google.</li>
     </ul>
 
-    <h2>4. Právny základ spracovania</h2>
-    <p>Analytické cookies spracúvame na základe vášho <strong>súhlasu</strong> (čl. 6 ods. 1 písm. a) GDPR), ktorý môžete kedykoľvek odvolať.</p>
+    <h2>5. Právny základ spracovania</h2>
+    <p>Analytické cookies aj údaje z kontaktného formulára spracúvame na základe vášho <strong>súhlasu</strong> (čl. 6 ods. 1 písm. a) GDPR), ktorý môžete kedykoľvek odvolať; pri kontaktnom formulári aj na základe oprávneného záujmu vybaviť vašu požiadavku (čl. 6 ods. 1 písm. f) GDPR).</p>
 
-    <h2>5. Doba uchovávania</h2>
-    <p>Dáta v Google Analytics sa štandardne uchovávajú do 14 mesiacov od poslednej aktivity, následne sa automaticky anonymizujú/mažú.</p>
+    <h2>6. Doba uchovávania</h2>
+    <p>Dáta v Google Analytics sa štandardne uchovávajú do 14 mesiacov od poslednej aktivity, následne sa automaticky anonymizujú/mažú. Správy z kontaktného formulára uchovávame v e-mailovej schránke prevádzkovateľa len po dobu potrebnú na vybavenie vašej požiadavky, prípadne dlhšie pri nadväzujúcej komunikácii — do odvolania súhlasu alebo žiadosti o vymazanie.</p>
 
-    <h2>6. Vaše práva</h2>
+    <h2>7. Vaše práva</h2>
     <p>V súvislosti so spracovaním údajov máte najmä právo na prístup k údajom, opravu, výmaz, obmedzenie spracovania a právo podať sťažnosť na Úrad na ochranu osobných údajov SR (<a href="https://dataprotection.gov.sk" target="_blank" rel="noopener">dataprotection.gov.sk</a>) alebo príslušný úrad v ČR.</p>
 
-    <h2>7. Kontakt</h2>
+    <h2>8. Kontakt</h2>
     <p>V prípade otázok k spracovaniu údajov nás kontaktujte na: <a href="mailto:chobot.lukas913@gmail.com">chobot.lukas913@gmail.com</a>.</p>
 
     <a class="back" href="index.html">← Späť na kalkulačku</a>
