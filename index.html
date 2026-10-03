@@ -78,6 +78,45 @@
 }
 </script>
 
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Koľko DIN modulov by mal mať rozvádzač rodinného domu?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Závisí od počtu okruhov a spotrebičov — bežný rodinný dom s 3-fázovou prípojkou sa často pohybuje medzi 48 a 96 modulmi vrátane rezervy. Kalkulačka počíta presný počet podľa konkrétnych parametrov a pridáva nastaviteľnú rezervu, odporúčame aspoň 20–30 %." }
+    },
+    {
+      "@type": "Question",
+      "name": "Aký je rozdiel medzi prúdovým chráničom 2P a 4P?",
+      "acceptedAnswer": { "@type": "Answer", "text": "2-pólový (2P) chránič sa používa na istenie 1-fázových okruhov, 4-pólový (4P) na istenie 3-fázových okruhov alebo spotrebičov ako sporák, tepelné čerpadlo či nabíjačka elektromobilu. Jeden chránič zvyčajne istí do 8 okruhov naraz." }
+    },
+    {
+      "@type": "Question",
+      "name": "Kedy potrebujem zvodič prepätia (SPD)?",
+      "acceptedAnswer": { "@type": "Answer", "text": "SPD sa v súčasnej praxi odporúča pri väčšine nových alebo rekonštruovaných domových elektroinštalácií, najmä pri citlivej elektronike, fotovoltike alebo vo zvýšene ohrozenej lokalite bleskom. Presné požiadavky stanovuje projekt." }
+    },
+    {
+      "@type": "Question",
+      "name": "Je hlavný vypínač (odpájač) povinný?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Áno, možnosť bezpečne odpojiť celý dom od siete jedným úkonom je štandardnou súčasťou domového rozvádzača. Kalkulačka ho zaraďuje ako 3-pólový prvok na 32 A, prípadne 40 A pri elektrickom kotli." }
+    },
+    {
+      "@type": "Question",
+      "name": "Nahrádza táto kalkulačka projekt elektroinštalácie?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Nie, ide o orientačný nástroj na plánovanie materiálu. Záväzný projekt elektroinštalácie a revíznu správu musí vypracovať alebo posúdiť oprávnený elektrikár či projektant elektro." }
+    },
+    {
+      "@type": "Question",
+      "name": "Platí tento nástroj aj pre Česko?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Áno, kalkulačka vychádza zo slovenských aj súvisiacich českých noriem (STN 33 2000/2130 a ČSN 33 2130) a je použiteľná pre bežnú prax na Slovensku aj v Česku." }
+    }
+  ]
+}
+</script>
+
 <script src="https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
@@ -113,7 +152,7 @@
     max-width:720px; margin:0 auto; padding:16px 14px; display:flex; align-items:center;
     justify-content:center; gap:9px;
   }
-  .brand { display:flex; align-items:center; gap:9px; color:#fff; font-size:18px; font-weight:700; text-align:center; }
+  .brand { display:flex; align-items:center; gap:9px; color:#fff; font-size:18px; font-weight:700; text-align:center; margin:0; }
   .brand-mark { color:var(--amber); font-size:20px; line-height:1; }
 
   .wrap { max-width: 720px; margin: 0 auto; padding: 20px 14px 0; }
@@ -199,6 +238,30 @@
     .brand { font-size:16px; }
   }
 
+  /* Informačné sekcie: metodika, glosár, FAQ */
+  .info-panel h2 { font-size:17px; margin:0 0 12px; color:var(--navy); }
+  .info-panel p { font-size:13.5px; line-height:1.65; color:#333B47; margin:0 0 10px; }
+  .method-list { margin:0; padding-left:20px; }
+  .method-list li { font-size:13.5px; line-height:1.65; color:#333B47; margin-bottom:6px; }
+
+  .glossary dt { font-weight:700; font-size:13.5px; color:var(--navy); margin-top:14px; }
+  .glossary dt:first-child { margin-top:0; }
+  .glossary dd { margin:4px 0 0; font-size:13.5px; line-height:1.6; color:#333B47; }
+
+  .faq details { border-bottom:1px solid var(--border); padding:12px 0; }
+  .faq details:first-child { padding-top:0; }
+  .faq details:last-child { border-bottom:none; padding-bottom:0; }
+  .faq summary {
+    font-size:14px; font-weight:600; color:var(--navy); cursor:pointer;
+    list-style:none; display:flex; align-items:center; justify-content:space-between; gap:10px;
+    min-height:28px; padding:4px 0;
+  }
+  .faq summary::-webkit-details-marker { display:none; }
+  .faq summary::after { content:"+"; font-size:18px; font-weight:400; color:var(--amber-dark); flex-shrink:0; }
+  .faq details[open] summary::after { content:"−"; }
+  .faq summary:focus-visible { outline:2px solid var(--blue); outline-offset:2px; }
+  .faq details p { margin:10px 0 2px; font-size:13.5px; line-height:1.65; color:#333B47; }
+
   /* Pätička */
   .site-footer { max-width:760px; margin:8px auto 28px; padding:0 14px; text-align:center; }
   .site-footer p { font-size:11.5px; color:#9AA2AD; line-height:1.6; }
@@ -232,7 +295,7 @@
 
 <div class="topbar">
   <div class="topbar-inner">
-    <div class="brand"><span class="brand-mark">⚡</span>Návrh elektrického rozvádzača</div>
+    <h1 class="brand"><span class="brand-mark">⚡</span>Návrh elektrického rozvádzača</h1>
   </div>
 </div>
 
@@ -315,6 +378,82 @@
     </div>
 
     <p class="note">Reálne dimenzovanie, menovité prúdy, selektivitu istenia a rozmiestnenie v rozvádzači musí posúdiť kvalifikovaný elektrikár alebo projektant elektro podľa STN 33 2000 a STN 33 2130 (prípadne ČSN 33 2130 v ČR). Zoznam je editovateľný — riadky pridávaj/mazaj podľa reálnej situácie a pred exportom stlač „Prepočítať súhrn“.</p>
+  </div>
+
+  <div class="panel info-panel">
+    <h2>Ako kalkulačka počíta</h2>
+    <p>Nástroj vychádza z bežnej slovenskej a českej projekčnej praxe a z okruhových princípov podľa noriem <strong>STN 33 2000</strong> (sústava noriem pre elektrické inštalácie nízkeho napätia), <strong>STN 33 2130</strong> / <strong>ČSN 33 2130</strong> (elektrické rozvody, inštalácia rozvádzačov) a <strong>STN EN 60898</strong> (menovité prúdy a charakteristiky ističov B/C/D).</p>
+    <p>Na základe zadaných parametrov domu (plocha, počet podlaží, izieb, kúpeľní, typ prípojky a zvolené spotrebiče) appka:</p>
+    <ul class="method-list">
+      <li>rozdelí dom na zóny a vygeneruje odporúčaný zoznam svetelných a zásuvkových okruhov,</li>
+      <li>priradí ku každému okruhu orientačný typ kábla a menovitý prúd ističa,</li>
+      <li>zoskupí okruhy pod prúdové chrániče (max. 8 okruhov na 1 chránič) a rozlíši 2-pólové (1-fázové) a 4-pólové (3-fázové) skupiny,</li>
+      <li>navrhne hlavný vypínač (odpájač) a zvodič prepätia (SPD) podľa typu prípojky,</li>
+      <li>spočíta celkový počet DIN modulov vrátane zvolenej rezervy a odporučí najbližšiu väčšiu veľkosť rozvádzačovej skrine.</li>
+    </ul>
+    <p class="note" style="margin-top:14px;">Ide o orientačný návrh na uľahčenie plánovania materiálu. Konečné dimenzovanie, selektivitu istenia, výpočet úbytku napätia a skutočné rozmiestnenie v rozvádzači musí vždy posúdiť a schváliť kvalifikovaný elektrikár alebo projektant elektro.</p>
+  </div>
+
+  <div class="panel info-panel">
+    <h2>Slovník pojmov</h2>
+    <dl class="glossary">
+      <dt>Istič</dt>
+      <dd>Prístroj, ktorý automaticky odpojí okruh pri nadprúde alebo skrate. Charakteristika B/C/D určuje citlivosť na spínací prúd — B pre bežné svetelné/zásuvkové okruhy, C pre okruhy so spínacím prúdovým nárazom (motory, kompresory), D pre silne indukčné záťaže.</dd>
+      <dt>Prúdový chránič (RCD)</dt>
+      <dd>Chráni pred úrazom elektrickým prúdom tak, že odpojí okruh pri úniku prúdu do zeme. 2-pólový (2P) sa používa pre 1-fázové okruhy, 4-pólový (4P) pre 3-fázové okruhy/spotrebiče.</dd>
+      <dt>Zvodič prepätia (SPD)</dt>
+      <dd>Prístroj chrániaci elektroinštaláciu a spotrebiče pred prepäťovými špičkami, napr. pri údere blesku do blízkosti alebo spínacích prepätiach v sieti.</dd>
+      <dt>Hlavný vypínač (odpájač)</dt>
+      <dd>Umožňuje bezpečne odpojiť celý dom od elektrickej siete jedným úkonom, napríklad pri revízii alebo zásahu.</dd>
+      <dt>DIN modul (MJ)</dt>
+      <dd>Štandardná jednotka šírky na montážnej lište v rozvádzači (1 modul ≈ 17,5 mm). Podľa súčtu modulov sa volí veľkosť rozvádzačovej skrine.</dd>
+      <dt>Okruh</dt>
+      <dd>Samostatná vetva elektroinštalácie istená vlastným ističom, napríklad zásuvky v jednej izbe alebo jeden väčší spotrebič.</dd>
+      <dt>1-fázová / 3-fázová prípojka</dt>
+      <dd>3-fázová prípojka (bežná pre rodinné domy) poskytuje vyšší výkon a je potrebná pre väčšie spotrebiče ako elektrický sporák, tepelné čerpadlo či nabíjačku elektromobilu.</dd>
+    </dl>
+  </div>
+
+  <div class="panel info-panel">
+    <h2>Časté otázky</h2>
+    <div class="faq">
+      <details>
+        <summary>Koľko DIN modulov by mal mať rozvádzač rodinného domu?</summary>
+        <p>Závisí od počtu okruhov a spotrebičov — bežný rodinný dom s 3-fázovou prípojkou sa často pohybuje medzi 48 a 96 modulmi vrátane rezervy. Táto kalkulačka počíta presný počet podľa tvojich konkrétnych parametrov a pridáva nastaviteľnú rezervu (odporúčame aspoň 20–30 %) na budúce rozšírenia.</p>
+      </details>
+      <details>
+        <summary>Aký je rozdiel medzi prúdovým chráničom 2P a 4P?</summary>
+        <p>2-pólový (2P) chránič sa používa na istenie 1-fázových okruhov (bežné zásuvky, osvetlenie), 4-pólový (4P) na istenie 3-fázových okruhov alebo spotrebičov (napr. sporák, tepelné čerpadlo, nabíjačka elektromobilu). Jeden chránič istí spravidla viac okruhov naraz, zvyčajne do 8 okruhov.</p>
+      </details>
+      <details>
+        <summary>Kedy potrebujem zvodič prepätia (SPD)?</summary>
+        <p>SPD sa v súčasnej praxi odporúča takmer pri každej novej alebo rekonštruovanej domovej elektroinštalácii, najmä ak je dom vybavený citlivou elektronikou, fotovoltikou alebo je vo zvýšene ohrozenej lokalite bleskom. Presné požiadavky stanovuje projekt a posúdi ich elektrikár.</p>
+      </details>
+      <details>
+        <summary>Je hlavný vypínač (odpájač) povinný?</summary>
+        <p>Áno, možnosť bezpečne odpojiť celý dom od siete jedným úkonom je štandardnou súčasťou domového rozvádzača. Táto kalkulačka ho automaticky zaraďuje ako 3-pólový prvok na 32 A (alebo 40 A pri zvolení elektrického kotla).</p>
+      </details>
+      <details>
+        <summary>Koľko okruhov potrebuje kúpeľňa?</summary>
+        <p>Kúpeľňa zvyčajne potrebuje samostatný okruh pre zásuvky (chránený prúdovým chráničom) a často aj vlastný okruh pre spotrebiče ako bojler, práčka alebo sušička, ak sa tam nachádzajú. Kalkulačka tieto okruhy generuje automaticky podľa počtu zadaných kúpeľní a zvolených spotrebičov.</p>
+      </details>
+      <details>
+        <summary>Čo je rezerva modulov a prečo je dôležitá?</summary>
+        <p>Rezerva je percento voľného miesta v rozvádzači navyše oproti aktuálne potrebným modulom. Umožňuje neskôr pridať ďalšie okruhy (napr. klimatizáciu, nabíjačku elektromobilu) bez nutnosti meniť celú skriňu rozvádzača.</p>
+      </details>
+      <details>
+        <summary>Nahrádza táto kalkulačka projekt elektroinštalácie?</summary>
+        <p>Nie. Ide o orientačný nástroj na uľahčenie plánovania materiálu a predstavy o rozsahu rozvádzača. Záväzný projekt elektroinštalácie, revíznu správu a skutočné dimenzovanie musí vždy vypracovať alebo posúdiť oprávnený elektrikár či projektant elektro.</p>
+      </details>
+      <details>
+        <summary>Platí tento nástroj aj pre Česko?</summary>
+        <p>Áno, kalkulačka vychádza zo slovenských aj súvisiacich českých noriem (STN 33 2000/2130 a ich český ekvivalent ČSN 33 2130) a je použiteľná pre bežnú prax na Slovensku aj v Česku. Lokálne špecifiká (napr. požiadavky distribútora elektriny) si vždy over u svojho elektrikára.</p>
+      </details>
+      <details>
+        <summary>Môžem si vygenerovaný zoznam okruhov upraviť?</summary>
+        <p>Áno, celý zoznam okruhov je plne editovateľný — môžeš meniť zóny, názvy, káble aj ističe, pridávať alebo mazať riadky, a následne vyexportovať upravenú verziu do Excelu alebo PDF.</p>
+      </details>
+    </div>
   </div>
 
 </div>
