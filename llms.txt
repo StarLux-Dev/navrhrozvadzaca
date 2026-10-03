@@ -12,5 +12,6 @@ Nejde o náhradu projektovej dokumentácie vypracovanej oprávneným projektanto
 - Výpočet hlavného vypínača (3-pólový, 32A/40A) a zvodiča prepätia (4-pólový)
 - Odporúčaná veľkosť rozvádzačovej skrine podľa počtu modulov a rezervy
 - Export do Excelu a PDF
+- Orientačný nákupný zoznam s odhadom ceny (rozpätie) za jednotlivé položky aj za celý rozvádzač, vrátane odhadu metrov kábla podľa zadanej plochy miestností, s odkazmi na porovnanie cien na Heureke
 
 Web: https://navrhrozvadzaca.sk/

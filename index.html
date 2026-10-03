@@ -117,6 +117,11 @@
       "@type": "Question",
       "name": "Ako appka odhaduje metre kábla a orientačnú cenu v nákupnom zozname?",
       "acceptedAnswer": { "@type": "Answer", "text": "Dĺžka kábla sa odhadne ako pevná trasa od rozvádzača (orientačne 8 m, + 2 m za každé ďalšie podlažie) plus rozvod v rámci miestnosti podľa jej plochy, ktorú možno voliteľne zadať. Ak sa nezadá, použije sa predvolená hodnota podľa typu miestnosti. Ide o vlastnú odhadovú metódu appky, nie o hodnotu danú normou, a ceny sú orientačné rozpätia z verejných cenníkov." }
+    },
+    {
+      "@type": "Question",
+      "name": "Ako funguje \"ťažší spotrebič\" pri garáži a hrubší kábel?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Pri zaškrtnutí voľby appka pre okruh garáže použije hrubší kábel (CYKY-J 3×4) a istič B20 namiesto štandardného 3×2,5 a B16. Pri viacerých garážach je možné voliteľne zadať, pre koľko z nich hrubší kábel platí — ak sa nezadá, platí pre všetky." }
     }
   ]
 }
@@ -183,6 +188,8 @@
     min-height:36px; border:1px solid #C9D0D8; border-radius:6px; font-family:'IBM Plex Mono', monospace;
   }
   input[type=number].qty:disabled { opacity:.4; background:#F1F3F6; }
+  .qtywrap { display:flex; align-items:center; gap:5px; flex:0 0 auto; }
+  .qty-suffix { font-size:11px; color:#9AA2AD; white-space:nowrap; }
   .check { display:flex; align-items:center; gap:9px; font-size:13.5px; color:#3A4350; min-height:32px; flex:1 1 auto; min-width:0; }
   .check input { accent-color:var(--amber); width:18px; height:18px; flex-shrink:0; }
   .btn {
@@ -237,6 +244,10 @@
   .warn-item:last-child { margin-bottom:0; }
 
   .field-hint { display:block; font-size:11px; color:#9AA2AD; margin-top:3px; }
+  .room-area-group { margin-bottom:14px; }
+  .room-area-label { font-size:12px; font-weight:600; color:#6B7280; margin-bottom:6px; text-transform:uppercase; letter-spacing:.3px; }
+  .room-area-grid { display:grid; grid-template-columns:1fr 1fr; gap:0 14px; }
+  @media (max-width:420px){ .room-area-grid { grid-template-columns:1fr; } }
   hr { border:none; border-top:1px solid var(--border); margin:16px 0; }
   @media (max-width:420px){
     .summary-grid{ grid-template-columns:repeat(2,1fr); }
@@ -271,6 +282,15 @@
     text-decoration:none; min-height:34px; white-space:nowrap;
   }
   .shop-link:hover { background:var(--amber); color:var(--navy); }
+  .shop-total { display:flex; align-items:center; justify-content:space-between; gap:10px; padding:12px 0 2px; margin-top:4px; border-top:2px solid var(--navy); }
+  .shop-total-label { font-size:14px; font-weight:700; color:var(--navy); }
+  .shop-total-price { font-size:17px; font-weight:800; color:var(--amber-dark); font-family:'IBM Plex Mono',monospace; }
+  .shop-total-note { font-size:11px; color:#9AA2AD; font-weight:400; margin-top:1px; }
+  .badge { display:inline-block; font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.4px; border-radius:4px; padding:2.5px 7px; margin-left:8px; vertical-align:middle; }
+  .badge-required { color:#fff; background:var(--navy); }
+  .badge-optional { color:#8A6416; background:#FFF6E5; border:1px solid #F0D48A; }
+  .optional-box { background:#FAFBFC; border:1.5px dashed #D8DEE5; border-radius:10px; padding:14px 16px 2px; margin:12px 0 18px; }
+  .optional-box > h3:first-child { margin-top:0; }
   .shop-note { font-size:11.5px; color:#9AA2AD; line-height:1.5; margin-top:10px; }
 
   /* Informačné sekcie: metodika, glosár, FAQ */
@@ -339,7 +359,7 @@
   <p class="sub">Zadaj parametre domu, vygeneruj zoznam okruhov, uprav si ho podľa potreby a exportuj do Excelu. Orientačný nástroj na plánovanie — nenahrádza projekt elektroinštalácie.</p>
 
   <div class="panel">
-    <h2>Parametre domu</h2>
+    <h2>Parametre domu <span class="badge badge-required">Povinné</span></h2>
     <div class="row2">
       <div><label for="plocha">Plocha domu (m²)</label><input id="plocha" type="number" inputmode="numeric" value="150" min="30" max="1000"></div>
       <div><label for="podlazia">Podlažia</label><input id="podlazia" type="number" inputmode="numeric" value="2" min="1" max="30"></div>
@@ -348,15 +368,30 @@
       <div><label for="izby">Počet izieb so zásuvkami</label><input id="izby" type="number" inputmode="numeric" value="4" min="1" max="60"></div>
       <div><label for="kupelne">Počet kúpeľní</label><input id="kupelne" type="number" inputmode="numeric" value="2" min="1" max="20"></div>
     </div>
-
-    <h3 style="margin-top:4px;">Spresnenie plochy miestností <span style="font-weight:400; color:#9AA2AD;">(voliteľné — presnejší odhad metrov kábla a ceny)</span></h3>
-    <div class="row2">
-      <div><label for="izbaM2">Priemerná plocha izby (m²)</label><input id="izbaM2" type="number" inputmode="numeric" placeholder="16" min="4" max="100" title="Ak nevyplníš, počíta sa s orientačnou hodnotou 16 m²."><span class="field-hint">Ak nevyplníš, počíta sa s 16 m²</span></div>
-      <div><label for="kupelnaM2">Priemerná plocha kúpeľne (m²)</label><input id="kupelnaM2" type="number" inputmode="numeric" placeholder="6" min="2" max="40" title="Ak nevyplníš, počíta sa s orientačnou hodnotou 6 m²."><span class="field-hint">Ak nevyplníš, počíta sa s 6 m²</span></div>
-    </div>
     <div class="row2" style="margin-bottom:14px;">
-      <div><label for="kuchynaM2">Plocha kuchyne (m²)</label><input id="kuchynaM2" type="number" inputmode="numeric" placeholder="12" min="3" max="60" title="Ak nevyplníš, počíta sa s orientačnou hodnotou 12 m²."><span class="field-hint">Ak nevyplníš, počíta sa s 12 m²</span></div>
-      <div><label for="garazM2">Plocha garáže (m²)</label><input id="garazM2" type="number" inputmode="numeric" placeholder="20" min="4" max="100" title="Ak nevyplníš, počíta sa s orientačnou hodnotou 20 m²."><span class="field-hint">Ak nevyplníš, počíta sa s 20 m²</span></div>
+      <div><label for="kuchyne">Počet kuchýň</label><input id="kuchyne" type="number" inputmode="numeric" value="1" min="1" max="5"></div>
+      <div><label for="qty_garaz">Počet garáží</label><input id="qty_garaz" type="number" inputmode="numeric" value="1" min="1" max="20"><span class="field-hint">Ak dom nemá garáž, odškrtni "Garáž" nižšie v Spotrebičoch.</span></div>
+    </div>
+
+    <div class="optional-box">
+      <h3>Spresnenie plochy miestností <span class="badge badge-optional">Voliteľné</span></h3>
+      <p style="font-size:12px; color:#9AA2AD; margin:-6px 0 12px;">Nechaj prázdne pokojne všetko — appka použije predvolené hodnoty. Vyplň len tie miestnosti, kde chceš presnejší odhad metrov kábla a ceny.</p>
+      <div class="room-area-group">
+        <div class="room-area-label">Izby</div>
+        <div class="room-area-grid" id="izbaM2Container"></div>
+      </div>
+      <div class="room-area-group">
+        <div class="room-area-label">Kúpeľne</div>
+        <div class="room-area-grid" id="kupelnaM2Container"></div>
+      </div>
+      <div class="room-area-group">
+        <div class="room-area-label">Kuchyne</div>
+        <div class="room-area-grid" id="kuchynaM2Container"></div>
+      </div>
+      <div class="room-area-group" id="garazM2Group" style="margin-bottom:14px;">
+        <div class="room-area-label">Garáže</div>
+        <div class="room-area-grid" id="garazM2Container"></div>
+      </div>
     </div>
 
     <div class="row2" style="margin-bottom:14px;">
@@ -368,20 +403,21 @@
 
     <h3>Spotrebiče a okruhy <span style="font-weight:400; color:#9AA2AD;">(zaškrtni a uprav počet, ak je viac ako 1)</span></h3>
     <div class="checkgrid" id="applianceGrid">
-      <div class="check-row"><label class="check"><input type="checkbox" id="elektrickeVarenie" checked> Elektrické varenie</label><input type="number" class="qty" id="qty_elektrickeVarenie" value="1" min="1" max="20" inputmode="numeric" aria-label="Počet"></div>
-      <div class="check-row"><label class="check"><input type="checkbox" id="bojler" checked> Bojler</label><input type="number" class="qty" id="qty_bojler" value="1" min="1" max="20" inputmode="numeric" aria-label="Počet"></div>
-      <div class="check-row"><label class="check"><input type="checkbox" id="pracka" checked> Práčka</label><input type="number" class="qty" id="qty_pracka" value="1" min="1" max="20" inputmode="numeric" aria-label="Počet"></div>
-      <div class="check-row"><label class="check"><input type="checkbox" id="susicka"> Sušička</label><input type="number" class="qty" id="qty_susicka" value="1" min="1" max="20" inputmode="numeric" aria-label="Počet" disabled></div>
-      <div class="check-row"><label class="check"><input type="checkbox" id="umyvacka" checked> Umývačka riadu</label><input type="number" class="qty" id="qty_umyvacka" value="1" min="1" max="20" inputmode="numeric" aria-label="Počet"></div>
-      <div class="check-row"><label class="check"><input type="checkbox" id="tepelneCerpadlo"> Tepelné čerpadlo</label><input type="number" class="qty" id="qty_tepelneCerpadlo" value="1" min="1" max="20" inputmode="numeric" aria-label="Počet" disabled></div>
-      <div class="check-row"><label class="check"><input type="checkbox" id="elektrickyKotol"> Elektrický kotol</label><input type="number" class="qty" id="qty_elektrickyKotol" value="1" min="1" max="20" inputmode="numeric" aria-label="Počet" disabled></div>
-      <div class="check-row"><label class="check"><input type="checkbox" id="klimatizacia"> Klimatizácia</label><input type="number" class="qty" id="qty_klimatizacia" value="1" min="1" max="20" inputmode="numeric" aria-label="Počet" disabled></div>
-      <div class="check-row"><label class="check"><input type="checkbox" id="garaz" checked> Garáž</label><input type="number" class="qty" id="qty_garaz" value="1" min="1" max="20" inputmode="numeric" aria-label="Počet"></div>
-      <div class="check-row" style="padding-top:0;"><label class="check" style="font-size:12.5px; color:#6B7280;"><input type="checkbox" id="garazTazsi"> Garáž má ťažší spotrebič (zváračka, kompresor...) → hrubší kábel</label></div>
-      <div class="check-row"><label class="check"><input type="checkbox" id="exterier" checked> Exteriér / záhrada</label><input type="number" class="qty" id="qty_exterier" value="1" min="1" max="20" inputmode="numeric" aria-label="Počet"></div>
-      <div class="check-row"><label class="check"><input type="checkbox" id="bazen"> Bazén</label><input type="number" class="qty" id="qty_bazen" value="1" min="1" max="20" inputmode="numeric" aria-label="Počet" disabled></div>
-      <div class="check-row"><label class="check"><input type="checkbox" id="evNabijacka" checked> Nabíjačka EV (rezerva)</label><input type="number" class="qty" id="qty_evNabijacka" value="1" min="1" max="20" inputmode="numeric" aria-label="Počet"></div>
-      <div class="check-row"><label class="check"><input type="checkbox" id="fve" checked> FVE (rezerva)</label><input type="number" class="qty" id="qty_fve" value="1" min="1" max="20" inputmode="numeric" aria-label="Počet"></div>
+      <div class="check-row"><label class="check"><input type="checkbox" id="elektrickeVarenie" checked> Elektrické varenie</label><span class="qtywrap"><input type="number" class="qty" id="qty_elektrickeVarenie" value="1" min="1" max="20" inputmode="numeric" aria-label="Počet"><span class="qty-suffix">ks</span></span></div>
+      <div class="check-row"><label class="check"><input type="checkbox" id="bojler" checked> Bojler</label><span class="qtywrap"><input type="number" class="qty" id="qty_bojler" value="1" min="1" max="20" inputmode="numeric" aria-label="Počet"><span class="qty-suffix">ks</span></span></div>
+      <div class="check-row"><label class="check"><input type="checkbox" id="pracka" checked> Práčka</label><span class="qtywrap"><input type="number" class="qty" id="qty_pracka" value="1" min="1" max="20" inputmode="numeric" aria-label="Počet"><span class="qty-suffix">ks</span></span></div>
+      <div class="check-row"><label class="check"><input type="checkbox" id="susicka"> Sušička</label><span class="qtywrap"><input type="number" class="qty" id="qty_susicka" value="1" min="1" max="20" inputmode="numeric" aria-label="Počet" disabled><span class="qty-suffix">ks</span></span></div>
+      <div class="check-row"><label class="check"><input type="checkbox" id="umyvacka" checked> Umývačka riadu</label><span class="qtywrap"><input type="number" class="qty" id="qty_umyvacka" value="1" min="1" max="20" inputmode="numeric" aria-label="Počet"><span class="qty-suffix">ks</span></span></div>
+      <div class="check-row"><label class="check"><input type="checkbox" id="tepelneCerpadlo"> Tepelné čerpadlo</label><span class="qtywrap"><input type="number" class="qty" id="qty_tepelneCerpadlo" value="1" min="1" max="20" inputmode="numeric" aria-label="Počet" disabled><span class="qty-suffix">ks</span></span></div>
+      <div class="check-row"><label class="check"><input type="checkbox" id="elektrickyKotol"> Elektrický kotol</label><span class="qtywrap"><input type="number" class="qty" id="qty_elektrickyKotol" value="1" min="1" max="20" inputmode="numeric" aria-label="Počet" disabled><span class="qty-suffix">ks</span></span></div>
+      <div class="check-row"><label class="check"><input type="checkbox" id="klimatizacia"> Klimatizácia</label><span class="qtywrap"><input type="number" class="qty" id="qty_klimatizacia" value="1" min="1" max="20" inputmode="numeric" aria-label="Počet" disabled><span class="qty-suffix">ks</span></span></div>
+      <div class="check-row"><label class="check"><input type="checkbox" id="garaz" checked> Garáž <span style="color:#9AA2AD; font-weight:400;">(počet nastavíš hore v Parametroch domu)</span></label></div>
+      <div class="check-row" style="padding-top:0;"><label class="check" style="font-size:12.5px; color:#6B7280;"><input type="checkbox" id="garazTazsi"> Garáž má ťažší spotrebič (zváračka, kompresor...) → hrubší kábel</label><span class="qtywrap"><input type="number" class="qty" id="qty_garazTazsi" min="1" max="20" inputmode="numeric" placeholder="všetky" title="Nechaj prázdne pre všetky garáže, alebo zadaj presný počet." aria-label="Pre koľko garáží" disabled><span class="qty-suffix">ks</span></span></div>
+      <div class="check-row" style="padding-top:0; padding-bottom:10px; border-bottom:1px solid #EDEFF2;"><span class="field-hint" style="margin:0;">Nechaj prázdne = hrubší kábel pre všetky garáže. Zadaj číslo, ak ho potrebuje len časť z nich (napr. 1 z 2 garáží).</span></div>
+      <div class="check-row"><label class="check"><input type="checkbox" id="exterier" checked> Exteriér / záhrada</label><span class="qtywrap"><input type="number" class="qty" id="qty_exterier" value="1" min="1" max="20" inputmode="numeric" aria-label="Počet"><span class="qty-suffix">ks</span></span></div>
+      <div class="check-row"><label class="check"><input type="checkbox" id="bazen"> Bazén</label><span class="qtywrap"><input type="number" class="qty" id="qty_bazen" value="1" min="1" max="20" inputmode="numeric" aria-label="Počet" disabled><span class="qty-suffix">ks</span></span></div>
+      <div class="check-row"><label class="check"><input type="checkbox" id="evNabijacka" checked> Nabíjačka EV (rezerva)</label><span class="qtywrap"><input type="number" class="qty" id="qty_evNabijacka" value="1" min="1" max="20" inputmode="numeric" aria-label="Počet"><span class="qty-suffix">ks</span></span></div>
+      <div class="check-row"><label class="check"><input type="checkbox" id="fve" checked> FVE (rezerva)</label><span class="qtywrap"><input type="number" class="qty" id="qty_fve" value="1" min="1" max="20" inputmode="numeric" aria-label="Počet"><span class="qty-suffix">ks</span></span></div>
     </div>
 
     <div class="btnrow">
@@ -458,7 +494,7 @@
       <li><strong>pevnej trasy</strong> od rozvádzača k miestnosti (orientačne 8 m, + 2 m za každé ďalšie podlažie navyše),</li>
       <li><strong>rozvodu v rámci miestnosti</strong>, ktorý sa odvíja od jej plochy (čím väčšia miestnosť, tým dlhší rozvod k zásuvkám/svetlám).</li>
     </ul>
-    <p>Ak pri danom type miestnosti nevyplníš voliteľnú plochu, appka použije tieto predvolené hodnoty: izba 16 m², kúpeľňa 6 m², kuchyňa 12 m², garáž 20 m² (zobrazené aj priamo pri poliach vo formulári).</p>
+    <p>Plochu môžeš zadať samostatne pre každú konkrétnu izbu, kúpeľňu, kuchyňu aj garáž (políčka sa zobrazia automaticky podľa zadaného počtu). Ak pri niektorej miestnosti plochu nevyplníš, appka použije predvolenú hodnotu podľa typu: izba 16 m², kúpeľňa 6 m², kuchyňa 12 m², garáž 20 m² (zobrazené aj priamo pri poliach vo formulári). Pri garáži navyše môžeš zvoliť, že má ťažší spotrebič (napr. zváračku) — vtedy sa pre jej okruh použije hrubší kábel a väčší istič; pri viacerých garážach si môžeš vybrať, pre koľko z nich to platí.</p>
     <p class="note">Toto je <strong>vlastná odhadová metóda appky</strong>, nie hodnota predpísaná normou — slúži len na orientačný rozpočet materiálu. Rovnako aj uvedené ceny sú orientačné rozpätia z verejných cenníkov (vidieť dátum aktualizácie priamo v nákupnom zozname), nie živé/aktuálne ceny konkrétneho obchodu. Skutočné množstvo kábla aj ceny si vždy over s elektrikárom a u vybraného dodávateľa.</p>
   </div>
 
@@ -524,6 +560,10 @@
       <details>
         <summary>Ako appka odhaduje metre kábla a orientačnú cenu v nákupnom zozname?</summary>
         <p>Pri každom okruhu sa dĺžka kábla odhadne ako pevná trasa od rozvádzača (orientačne 8 m, + 2 m za každé ďalšie podlažie) plus rozvod v rámci miestnosti podľa jej plochy — tú môžeš voliteľne zadať pri parametroch domu, inak sa použije predvolená hodnota (izba 16 m², kúpeľňa 6 m², kuchyňa 12 m², garáž 20 m²). Ide o vlastnú odhadovú metódu appky, nie o hodnotu danú normou. Ceny sú orientačné rozpätia z verejných cenníkov, aktualizované príležitostne — nie živé ceny konkrétneho obchodu.</p>
+      </details>
+      <details>
+        <summary>Ako funguje "ťažší spotrebič" pri garáži a hrubší kábel?</summary>
+        <p>Keď zaškrtneš "Garáž má ťažší spotrebič" (napr. zváračka, kompresor), appka pre okruh danej garáže použije hrubší kábel (CYKY-J 3×4 namiesto 3×2,5) a istič B20 namiesto B16. Ak máš garáží viac, vedľa checkboxu je voliteľné políčko "Pre koľko garáží" — necháš ho prázdne, ak sa to týka všetkých garáží, alebo zadáš konkrétny počet, ak hrubší kábel potrebuje len časť z nich (napr. 1 z 2). Prednostne sa priradí garážam v poradí, v akom sú zadané (Garáž 1, Garáž 2, ...).</p>
       </details>
     </div>
   </div>
@@ -650,10 +690,12 @@ let circuitLengths = {}; // id -> orientačná dĺžka kábla v metroch (mimo ci
 function buildCircuits(p){
   const c = [];
   const applLen = estApplianceLen(p.podlazia);
-  const izbaLen = estRoomLen(p.podlazia, p.izbaM2, 16);
-  const kupelnaLen = estRoomLen(p.podlazia, p.kupelnaM2, 6);
-  const kuchynaLen = estRoomLen(p.podlazia, p.kuchynaM2, 12);
-  const garazLen = estRoomLen(p.podlazia, p.garazM2, 20);
+
+  // Dĺžka kábla pre každú konkrétnu miestnosť podľa jej vlastnej (voliteľnej) plochy
+  const izbaLens = Array.from({length:p.izby}, (_,i) => estRoomLen(p.podlazia, (p.izbaAreas||[])[i], 16));
+  const kupelnaLens = Array.from({length:p.kupelne}, (_,i) => estRoomLen(p.podlazia, (p.kupelnaAreas||[])[i], 6));
+  const kuchynaLens = Array.from({length:p.kuchyne}, (_,i) => estRoomLen(p.podlazia, (p.kuchynaAreas||[])[i], 12));
+  const kuchynaLen1 = kuchynaLens[0] || estRoomLen(p.podlazia, 0, 12); // spotrebiče viazané na 1. kuchyňu
 
   const push = (zone,name,cable,breaker,modules,length) => {
     const id = rowId++;
@@ -669,29 +711,43 @@ function buildCircuits(p){
 
   for (let i=1;i<=p.podlazia;i++) push(`Podlažie ${i}`, `Svetlá – podlažie ${i}`, "CYKY-J 3×1,5", "B10", 1, estRoomLen(p.podlazia, p.plocha/p.podlazia, 60));
 
+  // Jeden zásuvkový okruh pokrýva orientačne 2 izby — dĺžka sa spriemeruje z ich vlastných plôch
   const zasuvkoveOkruhy = Math.max(1, Math.ceil(p.izby/2));
   for (let i=1;i<=zasuvkoveOkruhy;i++){
     const podlazie = p.podlazia>1 ? `Podlažie ${((i-1)%p.podlazia)+1}` : "Podlažie 1";
-    push(podlazie, `Zásuvky izby ${i}`, "CYKY-J 3×2,5", "B16", 1, izbaLen);
+    const a = izbaLens[(i-1)*2], b = izbaLens[(i-1)*2+1];
+    const len = (b!==undefined) ? Math.round((a+b)/2) : a;
+    push(podlazie, `Zásuvky izby ${i}`, "CYKY-J 3×2,5", "B16", 1, len);
   }
 
-  push("Kuchyňa","Zásuvky kuchyňa (drobné spotrebiče)","CYKY-J 3×2,5","B16",1, kuchynaLen);
-  pushN(p.elektrickeVarenie, p.elektrickeVarenieQty, "Kuchyňa","Elektrický sporák / varná doska", p.faze===3?"CYKY-J 5×2,5":"CYKY-J 3×4", "B16 (3f)", p.faze===3?3:1, kuchynaLen);
-  pushN(p.umyvacka, p.umyvackaQty, "Kuchyňa","Umývačka riadu","CYKY-J 3×2,5","B16",1, kuchynaLen);
-  push("Kuchyňa","Chladnička / mraznička (vlastný istič)","CYKY-J 3×2,5","B16",1, kuchynaLen);
+  for (let i=1;i<=p.kuchyne;i++){
+    push("Kuchyňa", p.kuchyne>1 ? `Zásuvky kuchyňa ${i} (drobné spotrebiče)` : "Zásuvky kuchyňa (drobné spotrebiče)", "CYKY-J 3×2,5","B16",1, kuchynaLens[i-1]);
+  }
+  pushN(p.elektrickeVarenie, p.elektrickeVarenieQty, "Kuchyňa","Elektrický sporák / varná doska", p.faze===3?"CYKY-J 5×2,5":"CYKY-J 3×4", "B16 (3f)", p.faze===3?3:1, kuchynaLen1);
+  pushN(p.umyvacka, p.umyvackaQty, "Kuchyňa","Umývačka riadu","CYKY-J 3×2,5","B16",1, kuchynaLen1);
+  push("Kuchyňa","Chladnička / mraznička (vlastný istič)","CYKY-J 3×2,5","B16",1, kuchynaLen1);
 
   pushN(p.pracka, p.prackaQty, "Technická miestnosť","Práčka","CYKY-J 3×2,5","B16",1);
   pushN(p.susicka, p.susickaQty, "Technická miestnosť","Sušička","CYKY-J 3×2,5","B16",1);
   pushN(p.bojler, p.bojlerQty, "Technická miestnosť","Bojler / ohrievač vody","CYKY-J 3×2,5","B16",1);
 
-  for (let i=1;i<=p.kupelne;i++) push("Mokré priestory", `Zásuvky kúpeľňa ${i}`, "CYKY-J 3×2,5","B16",1, kupelnaLen);
+  for (let i=1;i<=p.kupelne;i++) push("Mokré priestory", `Zásuvky kúpeľňa ${i}`, "CYKY-J 3×2,5","B16",1, kupelnaLens[i-1]);
 
   pushN(p.tepelneCerpadlo, p.tepelneCerpadloQty, "Vykurovanie","Tepelné čerpadlo","CYKY-J 5×2,5","B20 (3f)",3);
   pushN(p.elektrickyKotol, p.elektrickyKotolQty, "Vykurovanie","Elektrický kotol","CYKY-J 5×4","B25 (3f)",3);
   pushN(p.klimatizacia, p.klimatizaciaQty, "Chladenie","Klimatizácia","CYKY-J 3×2,5","B16",1);
-  const garazCable = p.garazTazsi ? "CYKY-J 3×4" : "CYKY-J 3×2,5";
-  const garazBreaker = p.garazTazsi ? "B20" : "B16";
-  pushN(p.garaz, p.garazQty, "Exteriér","Garáž – zásuvky a svetlo", garazCable, garazBreaker, 1, garazLen);
+
+  if (p.garaz){
+    const n = Math.max(1, Number(p.garazQty)||1);
+    const garazLens = Array.from({length:n}, (_,i) => estRoomLen(p.podlazia, (p.garazAreas||[])[i], 20));
+    const tazsiCount = p.garazTazsi ? Math.min(n, (p.garazTazsiQty && p.garazTazsiQty > 0) ? p.garazTazsiQty : n) : 0;
+    for (let i=1;i<=n;i++){
+      const jeTazsia = i <= tazsiCount;
+      const cable = jeTazsia ? "CYKY-J 3×4" : "CYKY-J 3×2,5";
+      const breaker = jeTazsia ? "B20" : "B16";
+      push("Exteriér", n>1 ? `Garáž – zásuvky a svetlo ${i}` : "Garáž – zásuvky a svetlo", cable, breaker, 1, garazLens[i-1]);
+    }
+  }
   pushN(p.exterier, p.exterierQty, "Exteriér","Vonkajšie zásuvky / záhrada","CYKY-J 3×2,5","B16",1);
   pushN(p.bazen, p.bazenQty, "Bazén","Bazénová technológia (filtrácia, ohrev)","CYKY-J 5×2,5","B16 (3f)",3);
   pushN(p.evNabijacka, p.evNabijackaQty, "Rezerva","Nabíjačka EV (rezerva)","CYKY-J 5×6","B32 (3f)",3);
@@ -734,18 +790,99 @@ function wireApplianceQty(){
 }
 wireApplianceQty();
 
+// ===== Dynamické políčka plochy pre každú jednotlivú miestnosť =====
+const ROOM_AREA_CONFIGS = [
+  { containerId: 'izbaM2Container', countInputId: 'izby', namePrefix: 'izbaM2', label: 'Izba', defaultArea: 16, max: 4 },
+  { containerId: 'kupelnaM2Container', countInputId: 'kupelne', namePrefix: 'kupelnaM2', label: 'Kúpeľňa', defaultArea: 6, max: 4 },
+  { containerId: 'kuchynaM2Container', countInputId: 'kuchyne', namePrefix: 'kuchynaM2', label: 'Kuchyňa', defaultArea: 12, max: 4 },
+  { containerId: 'garazM2Container', countInputId: 'qty_garaz', namePrefix: 'garazM2', label: 'Garáž', defaultArea: 20, max: 4 },
+];
+
+function renderRoomAreaFields(cfg){
+  const container = document.getElementById(cfg.containerId);
+  const countInput = document.getElementById(cfg.countInputId);
+  if (!container || !countInput) return;
+  const count = Math.max(1, Math.min(cfg.max, Number(countInput.value) || 1));
+
+  // Zachovaj už zadané hodnoty pri zmene počtu
+  const existing = {};
+  container.querySelectorAll('input').forEach(inp => { existing[inp.id] = inp.value; });
+
+  let html = '';
+  for (let i=1; i<=count; i++){
+    const id = `${cfg.namePrefix}_${i}`;
+    const val = existing[id] ? ` value="${existing[id]}"` : '';
+    const numLabel = count>1 ? ` ${i}` : '';
+    html += `<div><label for="${id}">${cfg.label}${numLabel} (m²)</label><input id="${id}" type="number" inputmode="numeric" placeholder="${cfg.defaultArea}" min="2" max="150"${val} title="Ak nevyplníš, počíta sa s orientačnou hodnotou ${cfg.defaultArea} m²."><span class="field-hint">Ak nevyplníš, počíta sa s ${cfg.defaultArea} m²</span></div>`;
+  }
+  container.innerHTML = html;
+
+  const realCount = Number(countInput.value) || 1;
+  const noteId = cfg.containerId + 'Note';
+  let note = document.getElementById(noteId);
+  if (realCount > cfg.max){
+    if (!note){ note = document.createElement('div'); note.id = noteId; note.className = 'field-hint'; container.insertAdjacentElement('afterend', note); }
+    note.textContent = `Zobrazené prvé ${cfg.max} — zvyšné (${realCount - cfg.max}) sa počítajú s predvolenou hodnotou ${cfg.defaultArea} m².`;
+  } else if (note){
+    note.remove();
+  }
+}
+
+function renderAllRoomAreaFields(){
+  ROOM_AREA_CONFIGS.forEach(renderRoomAreaFields);
+}
+
+function getRoomAreas(namePrefix, count){
+  const out = [];
+  for (let i=1; i<=count; i++){
+    const el = document.getElementById(`${namePrefix}_${i}`);
+    out.push(el ? Number(el.value)||0 : 0);
+  }
+  return out;
+}
+
+ROOM_AREA_CONFIGS.forEach(cfg => {
+  const countInput = document.getElementById(cfg.countInputId);
+  if (countInput) countInput.addEventListener('input', () => renderRoomAreaFields(cfg));
+});
+renderAllRoomAreaFields();
+
+// Povoľ/zakáž počet garáží s ťažším spotrebičom podľa stavu checkboxu
+(function wireGarazTazsiQty(){
+  const cb = document.getElementById('garazTazsi');
+  const qtyEl = document.getElementById('qty_garazTazsi');
+  if (!cb || !qtyEl) return;
+  const sync = () => { qtyEl.disabled = !cb.checked; };
+  cb.addEventListener('change', sync);
+  sync();
+})();
+
+// Skry políčka plochy garáže, keď je garáž odškrtnutá
+(function wireGarazAreaVisibility(){
+  const garazCb = document.getElementById('garaz');
+  const group = document.getElementById('garazM2Group');
+  if (!garazCb || !group) return;
+  const sync = () => { group.style.display = garazCb.checked ? '' : 'none'; };
+  garazCb.addEventListener('change', sync);
+  sync();
+})();
+
 function generuj(){
   const p = {
     plocha: Number(val('plocha')), podlazia: Math.max(1, Number(val('podlazia'))||1), izby: Number(val('izby')),
-    kupelne: Number(val('kupelne')), faze: Number(val('faze')), rezerva: Number(val('rezerva')),
-    izbaM2: Number(val('izbaM2'))||0, kupelnaM2: Number(val('kupelnaM2'))||0, kuchynaM2: Number(val('kuchynaM2'))||0, garazM2: Number(val('garazM2'))||0,
+    kupelne: Number(val('kupelne')), kuchyne: Math.max(1, Number(val('kuchyne'))||1), faze: Number(val('faze')), rezerva: Number(val('rezerva')),
     garazTazsi: checked('garazTazsi'),
+    garazTazsiQty: val('qty_garazTazsi') ? Number(val('qty_garazTazsi')) : null,
     elektrickeVarenie: checked('elektrickeVarenie'), bojler: checked('bojler'), pracka: checked('pracka'),
     susicka: checked('susicka'), umyvacka: checked('umyvacka'), tepelneCerpadlo: checked('tepelneCerpadlo'),
     elektrickyKotol: checked('elektrickyKotol'), klimatizacia: checked('klimatizacia'), garaz: checked('garaz'),
     exterier: checked('exterier'), bazen: checked('bazen'), evNabijacka: checked('evNabijacka'), fve: checked('fve'),
   };
   APPLIANCE_IDS.forEach(id => { p[id + 'Qty'] = qty(id); });
+  p.izbaAreas = getRoomAreas('izbaM2', p.izby);
+  p.kupelnaAreas = getRoomAreas('kupelnaM2', p.kupelne);
+  p.kuchynaAreas = getRoomAreas('kuchynaM2', p.kuchyne);
+  p.garazAreas = getRoomAreas('garazM2', p.garazQty);
   circuits = buildCircuits(p);
   window._faze = p.faze;
   window._podlazia = p.podlazia;
@@ -1075,12 +1212,22 @@ function renderShoppingList(){
 
   const container = document.getElementById('shopItems');
   if (!container) return;
-  container.innerHTML = items.map(item => `
+  const itemsHtml = items.map(item => `
     <div class="shop-item">
       <div class="shop-item-label">${item.label}${item.qty > 1 ? ` <span class="qty">×${item.qty}</span>` : ''}${item.range ? `<div class="shop-item-price">${fmtRange(item.range)}</div>` : `<div class="shop-item-price" style="color:#9AA2AD;">cena nedostupná</div>`}</div>
       <a class="shop-link" href="${heurekaUrl(item.query, locale)}" target="_blank" rel="noopener nofollow sponsored">Porovnať ceny ↗</a>
     </div>
   `).join('');
+  const totalHtml = items.length ? `
+    <div class="shop-total">
+      <div>
+        <div class="shop-total-label">Spolu (orientačne)</div>
+        <div class="shop-total-note">Súčet rozpätí všetkých položiek vyššie${data.hasUnpriced ? ' — niektoré položky nemajú cenu, reálny súčet bude vyšší' : ''}</div>
+      </div>
+      <div class="shop-total-price">${fmtRange([data.totalMin, data.totalMax])}${data.hasUnpriced ? '*' : ''}</div>
+    </div>
+  ` : '';
+  container.innerHTML = itemsHtml + totalHtml;
 }
 
 const SITE_URL = "https://navrhrozvadzaca.sk";
